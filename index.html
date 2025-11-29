@@ -2,19 +2,97 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>PEC – Nivel de procesamiento e intencionalidad</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PEC Psicología de la Memoria 2025/2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial; padding: 20px; font-size: 20px; }
-    button { padding: 10px 20px; font-size: 20px; margin: 10px; }
-    #content { margin-top: 20px; }
-    .letter-box { font-size: 26px; cursor: pointer; padding: 3px; display: inline-block; }
-    .marked { background: yellow; }
+    :root{
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #1765d9;
+      --accent-2: #7fb3ff;
+      --success: #2e7d32;
+      --danger: #b00020;
+      --glass: rgba(255,255,255,0.6);
+      --max-width: 880px;
+    }
+
+    html,body{height:100%}
+    body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background: linear-gradient(180deg,#eef4ff 0%,var(--bg) 40%); padding: 28px; font-size: 16px; color: #111827; display:flex; align-items:center; justify-content:center }
+
+    .app { width:100%; max-width:var(--max-width); margin: 18px; }
+    header.app-header{ display:flex; align-items:flex-start; gap:18px; justify-content:space-between; margin-bottom:18px }
+    .brand{ display:flex; align-items:center; gap:12px }
+    .brand h1{ font-size:20px; margin:0; font-weight:700 }
+    .brand p{ margin:0; color:var(--muted); font-size:13px }
+
+    .card{ background:var(--card); border-radius:12px; box-shadow:0 6px 30px rgba(16,24,40,0.08); padding:20px; }
+
+    .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+    button { background:var(--accent); color:white; padding:8px 14px; border-radius:8px; border:0; font-weight:600; cursor:pointer; transition:transform .06s ease, box-shadow .06s; box-shadow:0 6px 18px rgba(23,101,217,0.12) }
+    button.secondary{ background:transparent; color:var(--accent); border:1px solid rgba(23,101,217,0.14); box-shadow:none }
+    button:active{ transform:translateY(1px) }
+
+    #content{ margin-top:8px }
+    .letter-box { font-size: 26px; cursor: pointer; padding: 8px 10px; display: inline-block; margin: 6px; border-radius:10px; user-select:none; touch-action:manipulation; -webkit-tap-highlight-color: transparent; background:transparent; border:1px dashed rgba(16,24,40,0.05); min-width:36px; min-height:36px; display:inline-flex; align-items:center; justify-content:center }
+    .letter-box.marked { background: #ffd54f; box-shadow: 0 0 0 3px rgba(255,213,79,0.15); }
+    /* make the UI adapt better on small screens */
+    .top-row{ display:flex; align-items:center; justify-content:space-between; gap:12px }
+    @media (max-width:860px){ .app{ padding:8px 6px } }
+    @media (max-width:680px){ .brand h1{ font-size:17px } .brand p{font-size:12px} }
+    @media (max-width:480px){
+      body{font-size:16px;padding:14px}
+      .letter-box{font-size:24px;padding:12px 12px;margin:6px;min-width:40px;min-height:44px}
+      button{padding:10px 12px;font-size:16px}
+      header.app-header{flex-direction:column;align-items:stretch}
+    }
+    .letter-box:focus{outline:3px solid rgba(33,150,243,0.7)}
+    #timer{font-weight:700;margin-top:12px;color:var(--muted);display:block}
+
+    /* progress bar */
+    .progress{ height:12px;background:linear-gradient(90deg,var(--accent-2),var(--accent)); border-radius:999px; box-shadow:inset 0 -3px 8px rgba(0,0,0,0.06); width:0% }
+    .progress-wrap{ height:12px;background:linear-gradient(180deg,rgba(16,24,40,0.06),rgba(16,24,40,0.02)); border-radius:999px; padding:2px }
+
+    /* content layout */
+    .study-area{ display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center }
+    .word{ font-size:40px; font-weight:700; color:#0b1220 }
+    .choices{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center }
+    .choices button{ padding:10px 14px; min-width:86px; border-radius:10px; font-size:15px }
+    .filler-area{ width:100%; display:grid; grid-template-columns: repeat(auto-fill,minmax(36px,48px)); gap:8px; padding:8px; border-radius:8px; background:linear-gradient(180deg, rgba(16,24,40,0.02), rgba(16,24,40,0.01)); max-height:360px; overflow:auto; align-content:start }
+    .letter-box.marked{ background: linear-gradient(90deg,#ffd54f,#ffd06a); border:1px solid rgba(255,200,80,0.55); box-shadow:0 12px 30px rgba(255,200,80,0.12) }
+
+    .meta{ display:flex; gap:18px; align-items:center; color:var(--muted); font-size:13px }
   </style>
 </head>
 <body>
 
-<h2>PEC – Nivel de procesamiento e intencionalidad</h2>
-<div id="content"></div>
+<div class="app">
+  <header class="app-header">
+    <div class="brand">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700">PEC</div>
+      <div>
+        <h1>PEC Psicología de la Memoria 2025/2026</h1>
+        <p>Estudio científico de memoria (UNED) — tarea breve</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="meta">Grupo: <strong id="group-display">?</strong></div>
+      <div class="meta">Lista: <strong id="list-display">?</strong></div>
+    </div>
+  </header>
+
+  <main class="card" id="main-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;">
+      <div style="flex:1">
+        <div class="progress-wrap"><div id="progress" class="progress" style="width:0%"></div></div>
+      </div>
+      <div style="min-width:140px;text-align:right;color:var(--muted);font-weight:600;">Paso <span id="progress-label">0</span>/<span id="progress-total">0</span></div>
+    </div>
+
+    <div id="content"></div>
+  </main>
+</div>
 
 <script>
 let group = Math.random()<0.5 ? "Incidental" : "Intencional";
@@ -27,13 +105,45 @@ let words = [
   "ZAPATO","DELFIN","ENSALADA","TERREMOTO","GUSANO","FRESA","DESIERTO"
 ];
 
+// cue sequence for list A (explicit 30-item pattern requested)
+const cueSeq = [
+  'A','S','A','S','S','A','S','A','S','S',
+  'A','A','S','S','A','S','A','S','A','S',
+  'A','S','A','A','S','A','S','A','A','S'
+];
+
 let listA = [], listB = [];
 for(let i=0;i<30;i++){
-  listA.push({word:words[i], cue:(i<15?"S":"A")});
-  listB.push({word:words[i], cue:(i<15?"A":"S")});
+  const cueA = cueSeq[i];
+  const cueB = cueA === 'A' ? 'S' : 'A'; // inverted for list B
+  listA.push({word:words[i], cue:cueA});
+  listB.push({word:words[i], cue:cueB});
 }
 
 let trialList = listVersion==="A" ? listA : listB;
+
+// populate small header fields and initialize progress UI
+function initUI(){
+  const gd = document.getElementById('group-display');
+  const ld = document.getElementById('list-display');
+  const pt = document.getElementById('progress-total');
+  if(gd) gd.textContent = (group === 'Intencional') ? 'I' : 'N';
+  if(ld) ld.textContent = listVersion;
+  if(pt) pt.textContent = trialList.length;
+  updateProgress();
+}
+
+function updateProgress(){
+  const p = document.getElementById('progress');
+  const lbl = document.getElementById('progress-label');
+  if(!p || !lbl) return;
+  const total = trialList.length || 1;
+  const completed = Math.min(Math.max(idx,0), total);
+  const percentComplete = Math.round((completed/total)*100);
+  p.style.width = percentComplete + '%';
+  // show trial number (1-based) while there are still trials left, otherwise show total
+  lbl.textContent = completed < total ? (completed + 1) : total;
+}
 
 let data = {
   group: group,
@@ -52,12 +162,13 @@ function show(html){
 ============================================================ */
 function consent(){
   show(`
-    <p>En este estudio se evaluará la realización de una serie de tareas cognitivas. 
-    La duración aproximada es de 10-15 minutos.  
-    La participación es voluntaria y los datos serán anónimos.</p>
-    <p>¿Acepta participar?</p>
-    <button onclick="demographics()">Sí, acepto</button>
-    <button onclick="endExp()">No acepto</button>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+      <p style="max-width:680px;color:var(--muted)">En este estudio se evaluará la realización de una serie de tareas cognitivas. La duración aproximada es de 10-15 minutos. La participación es voluntaria y los datos serán anónimos.</p>
+      <div style="display:flex;gap:10px;">
+        <button onclick="demographics()">Sí, acepto</button>
+        <button class="secondary" onclick="endExp()">No acepto</button>
+      </div>
+    </div>
   `);
 }
 
@@ -66,10 +177,12 @@ function consent(){
 ============================================================ */
 function demographics(){
   show(`
-    <p>Edad: <input id='edad'></p>
-    <p>Sexo: <input id='sexo'></p>
-    <p>Años de estudios formales: <input id='est'></p>
-    <button onclick="saveDemographics()">Continuar</button>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+      <label>Edad: <input id='edad' type='number' min='16' max='120' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
+      <label>Sexo: <input id='sexo' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
+      <label>Años de estudios formales: <input id='est' type='number' min='0' max='50' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
+      <div style="margin-top:6px"><button onclick="saveDemographics()">Continuar</button></div>
+    </div>
   `);
 }
 
@@ -116,29 +229,40 @@ let idx = 0;
 function startStudy(){ nextTrial(); }
 
 function nextTrial(){
+  updateProgress();
   if(idx>=trialList.length){ fillerInstructions(); return; }
 
   let t = trialList[idx];
 
-  show(`<p style="font-size:50px;">${t.cue}</p>`);
+  show(`<div class="study-area"><div style="font-size:56px;font-weight:800;color:var(--accent)">${t.cue}</div></div>`);
   setTimeout(()=> displayWord(t), 900);
 }
 
 function displayWord(t){
   if(t.cue==="S"){
     show(`
-      <p style="font-size:40px;">${t.word}</p>
-      <button onclick="recordResp('${t.word}','S','1')">1</button>
-      <button onclick="recordResp('${t.word}','S','2')">2</button>
-      <button onclick="recordResp('${t.word}','S','3')">3</button>
-      <button onclick="recordResp('${t.word}','S','4')">4</button>
-      <button onclick="recordResp('${t.word}','S','5+')">5+</button>
+      <div class="study-area">
+        <div style="font-size:28px;color:var(--muted);font-weight:600">Indicador: <span style="font-weight:800">S</span></div>
+        <div class="word">${t.word}</div>
+        <div class="choices">
+          <button onclick="recordResp('${t.word}','S','1')">1</button>
+          <button onclick="recordResp('${t.word}','S','2')">2</button>
+          <button onclick="recordResp('${t.word}','S','3')">3</button>
+          <button onclick="recordResp('${t.word}','S','4')">4</button>
+          <button onclick="recordResp('${t.word}','S','5+')">5+</button>
+        </div>
+      </div>
     `);
   } else {
     show(`
-      <p style="font-size:40px;">${t.word}</p>
-      <button onclick="recordResp('${t.word}','A','Agradable')">Agradable</button>
-      <button onclick="recordResp('${t.word}','A','Desagradable')">Desagradable</button>
+      <div class="study-area">
+        <div style="font-size:28px;color:var(--muted);font-weight:600">Indicador: <span style="font-weight:800">A</span></div>
+        <div class="word">${t.word}</div>
+        <div class="choices">
+          <button onclick="recordResp('${t.word}','A','Agradable')">Agradable</button>
+          <button onclick="recordResp('${t.word}','A','Desagradable')">Desagradable</button>
+        </div>
+      </div>
     `);
   }
 }
@@ -149,32 +273,76 @@ function recordResp(word,cue,resp){
 }
 
 /* ============================================================
-   INSTRUCCIONES TAREA DE RELLENO
+  INSTRUCCIONES TAREA DE ATENCIÓN (distractor)
 ============================================================ */
 function fillerInstructions(){
   show(`
-    <h3>Tarea de relleno</h3>
-    <p>En la siguiente tarea encontrará una serie de letras.</p>
-    <p>Debe tachar únicamente aquellas letras <b>“c”</b> que estén <b>precedidas por una “a”</b> o <b>seguidas de una “e”</b>.</p>
-    <p>Dispone de <b>3 minutos</b> para realizar esta tarea.</p>
-    <button onclick="startFiller()">Comenzar</button>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+      <h3 style="margin:0;margin-bottom:6px">Tarea de atención (distractor)</h3>
+      <p style="color:var(--muted);margin:0">En la siguiente tarea encontrará una serie de letras. Debe tachar únicamente aquellas letras <b>“c”</b> que estén <b>precedidas por una “a”</b> o <b>seguidas de una “e”</b>.</p>
+      <div style="margin-top:8px;color:var(--muted)">Dispone de <strong>3 minutos</strong> para realizar esta tarea.</div>
+      <div style="margin-top:8px"><button onclick="startFiller()">Comenzar</button></div>
+    </div>
   `);
 }
 
 /* ============================================================
-   TAREA DE RELLENO REAL (3 MIN)
+  TAREA DE ATENCIÓN REAL (3 MIN) (distractor)
 ============================================================ */
 function startFiller(){
-  let letters = "ab cde bacde ace bacde eac deab cae ace bac ead cbe".repeat(20);
-
-  let html = `<p>Marque las "c" correctas:</p><div>`;
-  for(let i=0;i<letters.length;i++){
-    if(letters[i]!==" ")
-      html += `<span class='letter-box' onclick='this.classList.add("marked")'>${letters[i]}</span>`;
+  // create a more varied sequence of letter segments and avoid repeating the exact same block
+  const segments = ["ab","cde","bacde","ace","bac","ead","cbe","deab","cae"];
+  function buildLetterString(repeatCount){
+    let out = [];
+    let last = null;
+    for(let i=0;i<repeatCount;i++){
+      // pick a random segment that isn't equal to the previous one to reduce repetition
+      let seg;
+      do { seg = segments[Math.floor(Math.random()*segments.length)]; } while(seg===last && segments.length>1);
+      last = seg;
+      out.push(seg);
+    }
+    return out.join(' ');
   }
-  html += `</div><br><p id='timer'></p>`;
+
+  // generate a longer and varied sequence but keep a reasonable number of items so the grid looks coherent
+  // adjust the repeat count here if you want more or fewer items
+  let letters = buildLetterString(80);
+
+  let html = `<p style="font-weight:600;margin-bottom:6px">Marque las "c" correctas:</p><div id='filler-area' class='filler-area'>`;
+  for(let i=0;i<letters.length;i++){
+    if(letters[i] !== " ") html += `<span class='letter-box' data-index='${i}' tabindex='0' role='button' aria-pressed='false'>${letters[i]}</span>`;
+  }
+  html += `</div><br><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><p id='timer' style='margin:0;font-size:15px'></p><div style="color:var(--muted);font-size:13px">Toca para marcar/desmarcar — usa Tab + Enter/Espacio para accesibilidad</div></div>`;
 
   show(html);
+
+  // add event handling using delegation and pointer events so it works for click/touch
+  const container = document.getElementById('content');
+  const fillerArea = document.getElementById('filler-area');
+  if(fillerArea){
+    // use pointerdown which covers mouse and touch; toggle selected state
+    fillerArea.addEventListener('pointerdown', (ev)=>{
+      const t = ev.target;
+      if(t && t.classList && t.classList.contains('letter-box')){
+        // toggle selection so clicking again deselects
+        const now = t.classList.toggle('marked');
+        // update accessibility state
+        t.setAttribute('aria-pressed', now ? 'true' : 'false');
+      }
+    });
+    // keyboard toggling (space/enter) for accessibility
+    fillerArea.addEventListener('keydown', (ev)=>{
+      const t = ev.target;
+      if(t && t.classList && t.classList.contains('letter-box') && (ev.key === ' ' || ev.key === 'Enter')){
+        ev.preventDefault();
+        const now = t.classList.toggle('marked');
+        t.setAttribute('aria-pressed', now ? 'true' : 'false');
+      }
+    });
+    // prevent selection on long press for mobile
+    fillerArea.addEventListener('contextmenu', (e)=>e.preventDefault());
+  }
 
   let secs = 180;
   document.getElementById("timer").innerText = "Tiempo restante: 180 s";
@@ -194,10 +362,12 @@ function startFiller(){
 ============================================================ */
 function recall(){
   show(`
-    <h3>Prueba de memoria</h3>
-    <p>Escriba todas las palabras que recuerde (sin importar el orden).</p>
-    <textarea id='rec' rows='10' cols='40'></textarea><br>
-    <button onclick="saveRecall()">Finalizar</button>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+      <h3 style="margin:0">Prueba de memoria</h3>
+      <p style="color:var(--muted);margin:0">Escriba todas las palabras que recuerde (sin importar el orden).</p>
+      <textarea id='rec' rows='10' cols='40' style='width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)'></textarea>
+      <div><button onclick="saveRecall()">Finalizar</button></div>
+    </div>
   `);
 }
 
@@ -219,13 +389,17 @@ function finish(){
   let url = URL.createObjectURL(blob);
 
   show(`
-    <p>Muchas gracias por participar.</p>
-    <a href='${url}' download='datos_PEC.csv'>Descargar datos (CSV)</a>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+      <p style="font-weight:700;margin:0">Muchas gracias por participar.</p>
+      <p style="color:var(--muted);margin:0">Puede descargar sus datos para análisis local en formato CSV.</p>
+      <a href='${url}' download='datos_PEC.csv' style="display:inline-block;margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--accent);color:white;text-decoration:none">Descargar datos (CSV)</a>
+    </div>
   `);
 }
 
-function endExp(){ show("<p>Fin del experimento.</p>"); }
+function endExp(){ show(`<div style="text-align:center;color:var(--muted)"><p style="font-weight:700;margin:0">Fin del experimento</p><p style="margin:0">Gracias por su tiempo.</p></div>`); }
 
+initUI();
 consent();
 </script>
 
