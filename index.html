@@ -303,7 +303,7 @@ function fillerInstructions(){
   show(`
     <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
       <h3 style="margin:0;margin-bottom:6px">Tarea de atención (distractor)</h3>
-      <p style="color:var(--muted);margin:0">En esta hoja encontrará una serie de letras (a, b, c, d, e). Su tarea consiste en tachar, de forma clara, todas aquellas letras “c” que vayan precedidas de letras “a”, o que vayan seguidas de “e” (el resto de “c” no deben ser marcadas). Dispone de <strong>3 minutos</strong> para realizar esta tarea.</p>
+      <p style="color:var(--muted);margin:0">En esta página encontrará una serie de letras (a, b, c, d, e). Su tarea consiste en tachar, de forma clara, todas aquellas letras “c” que vayan precedidas de letras “a”, o que vayan seguidas de “e” (el resto de “c” no deben ser marcadas). Dispone de <strong>3 minutos</strong> para realizar esta tarea.</p>
       <div style="margin-top:8px"><button onclick="startFiller()">Comenzar</button></div>
     </div>
   `);
@@ -397,7 +397,7 @@ function recall(){
   show(`
     <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
       <h3 style="margin:0">Prueba de memoria</h3>
-      <p style="color:var(--muted);margin:0">A continuación, se evaluará el recuerdo de las palabras que fueron presentadas anteriormente. Por favor, escriba en la hoja todas las palabras que logre recordar en el orden que prefiera (no es necesario que sea el mismo en que aparecieron) de las que se presentaron al comienzo del experimento, con independencia de si tenía que decidir su número de sílabas (letra S) o juzgarla como positiva o negativa (letra A). No se preocupe si no puede recordar todas las palabras. Dispone de <strong>5 minutos</strong> para hacer esta tarea. Muchas gracias por su colaboración</p>
+      <p style="color:var(--muted);margin:0">A continuación, se evaluará el recuerdo de las palabras que fueron presentadas anteriormente. Por favor, escriba en el recuadro todas las palabras que logre recordar en el orden que prefiera (no es necesario que sea el mismo en que aparecieron) de las que se presentaron al comienzo del experimento, separadas por espacio, con independencia de si tenía que decidir su número de sílabas (letra S) o juzgarla como positiva o negativa (letra A). No se preocupe si no puede recordar todas las palabras. Dispone de <strong>5 minutos</strong> para hacer esta tarea. Muchas gracias por su colaboración</p>
       <textarea id='rec' rows='10' cols='40' style='width:100%;padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></textarea>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px"><p id='rec-timer' style='margin:0;font-weight:700;color:var(--muted)'></p><div style="color:var(--muted);font-size:13px">La tarea de memoria tiene límite de <strong>5 minutos</strong>. Si se agota el tiempo, su respuesta será guardada automáticamente para descarga.</div></div>
       <div style="margin-top:8px"><button onclick="saveRecall()">Finalizar</button></div>
