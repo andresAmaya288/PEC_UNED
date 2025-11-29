@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PEC – Nivel de procesamiento e intencionalidad</title>
+  <style>
+    body { font-family: Arial; padding: 20px; font-size: 20px; }
+    button { padding: 10px 20px; font-size: 20px; margin: 10px; }
+    #content { margin-top: 20px; }
+    .letter-box { font-size: 26px; cursor: pointer; padding: 3px; display: inline-block; }
+    .marked { background: yellow; }
+  </style>
+</head>
+<body>
+
+<h2>PEC – Nivel de procesamiento e intencionalidad</h2>
+<div id="content"></div>
+
+<script>
+let group = Math.random()<0.5 ? "Incidental" : "Intencional";
+let listVersion = Math.random()<0.5 ? "A" : "B";
+
+let words = [
+  "HUESO","MIEL","RINOCERONTE","CAMA","TORNADO","SOL","TANQUE","VINO",
+  "MOSCA","LENTEJAS","FRIO","ELEFANTE","CHOCOLATE","PAZ","PRECIPICIO",
+  "BIKINI","MAR","COCODRILO","BUITRE","IGLESIA","VOLCAN","AVISPA","FLOR",
+  "ZAPATO","DELFIN","ENSALADA","TERREMOTO","GUSANO","FRESA","DESIERTO"
+];
+
+let listA = [], listB = [];
+for(let i=0;i<30;i++){
+  listA.push({word:words[i], cue:(i<15?"S":"A")});
+  listB.push({word:words[i], cue:(i<15?"A":"S")});
+}
+
+let trialList = listVersion==="A" ? listA : listB;
+
+let data = {
+  group: group,
+  list: listVersion,
+  demographics: {},
+  trials: [],
+  recall: ""
+};
+
+function show(html){
+  document.getElementById("content").innerHTML = html;
+}
+
+/* ============================================================
+   CONSENTIMIENTO
+============================================================ */
+function consent(){
+  show(`
+    <p>En este estudio se evaluará la realización de una serie de tareas cognitivas. 
+    La duración aproximada es de 10-15 minutos.  
+    La participación es voluntaria y los datos serán anónimos.</p>
+    <p>¿Acepta participar?</p>
+    <button onclick="demographics()">Sí, acepto</button>
+    <button onclick="endExp()">No acepto</button>
+  `);
+}
+
+/* ============================================================
+   DATOS DEMOGRÁFICOS
+============================================================ */
+function demographics(){
+  show(`
+    <p>Edad: <input id='edad'></p>
+    <p>Sexo: <input id='sexo'></p>
+    <p>Años de estudios formales: <input id='est'></p>
+    <button onclick="saveDemographics()">Continuar</button>
+  `);
+}
+
+function saveDemographics(){
+  data.demographics = {
+    edad: document.getElementById("edad").value,
+    sexo: document.getElementById("sexo").value,
+    estudios: document.getElementById("est").value
+  };
+  instructions();
+}
+
+/* ============================================================
+   INSTRUCCIONES SEGÚN GRUPO
+============================================================ */
+function instructions(){
+  let txt_incidental = `
+    <h3>Instrucciones</h3>
+    <p>A continuación, se mostrarán una serie de palabras sobre las que debe realizar 2 tipos de juicios discriminativos.</p>
+    <p>Si antes de la palabra aparece la letra <b>S</b>, debe decidir lo más rápidamente posible cuántas sílabas tiene la palabra.</p>
+    <p>Si aparece la letra <b>A</b>, debe indicar si la palabra le resulta <b>agradable</b> o <b>desagradable</b>.</p>
+    <p>Una vez emita el juicio, aparecerá la siguiente palabra. </p>
+    <button onclick="startStudy()">Comenzar</button>
+  `;
+
+  let txt_intencional = `
+    <h3>Instrucciones</h3>
+    <p>A continuación, se mostrarán una serie de palabras sobre las que debe realizar 2 tipos de juicios discriminativos.</p>
+    <p>Si antes de la palabra aparece la letra <b>S</b>, debe decidir lo más rápidamente posible cuántas sílabas tiene la palabra.</p>
+    <p>Si aparece la letra <b>A</b>, debe indicar si la palabra le resulta <b>agradable</b> o <b>desagradable</b>.</p>
+    <p>Una vez emita el juicio, aparecerá la siguiente palabra. </p>
+    <p><b>Asimismo, preste atención, ya que al final se realizará una prueba de memoria.</b></p>
+    <button onclick="startStudy()">Comenzar</button>
+  `;
+
+  show(group==="Incidental" ? txt_incidental : txt_intencional);
+}
+
+/* ============================================================
+   FASE DE ESTUDIO
+============================================================ */
+let idx = 0;
+
+function startStudy(){ nextTrial(); }
+
+function nextTrial(){
+  if(idx>=trialList.length){ fillerInstructions(); return; }
+
+  let t = trialList[idx];
+
+  show(`<p style="font-size:50px;">${t.cue}</p>`);
+  setTimeout(()=> displayWord(t), 900);
+}
+
+function displayWord(t){
+  if(t.cue==="S"){
+    show(`
+      <p style="font-size:40px;">${t.word}</p>
+      <button onclick="recordResp('${t.word}','S','1')">1</button>
+      <button onclick="recordResp('${t.word}','S','2')">2</button>
+      <button onclick="recordResp('${t.word}','S','3')">3</button>
+      <button onclick="recordResp('${t.word}','S','4')">4</button>
+      <button onclick="recordResp('${t.word}','S','5+')">5+</button>
+    `);
+  } else {
+    show(`
+      <p style="font-size:40px;">${t.word}</p>
+      <button onclick="recordResp('${t.word}','A','Agradable')">Agradable</button>
+      <button onclick="recordResp('${t.word}','A','Desagradable')">Desagradable</button>
+    `);
+  }
+}
+
+function recordResp(word,cue,resp){
+  data.trials.push({word, cue, response:resp});
+  idx++; nextTrial();
+}
+
+/* ============================================================
+   INSTRUCCIONES TAREA DE RELLENO
+============================================================ */
+function fillerInstructions(){
+  show(`
+    <h3>Tarea de relleno</h3>
+    <p>En la siguiente tarea encontrará una serie de letras.</p>
+    <p>Debe tachar únicamente aquellas letras <b>“c”</b> que estén <b>precedidas por una “a”</b> o <b>seguidas de una “e”</b>.</p>
+    <p>Dispone de <b>3 minutos</b> para realizar esta tarea.</p>
+    <button onclick="startFiller()">Comenzar</button>
+  `);
+}
+
+/* ============================================================
+   TAREA DE RELLENO REAL (3 MIN)
+============================================================ */
+function startFiller(){
+  let letters = "ab cde bacde ace bacde eac deab cae ace bac ead cbe".repeat(20);
+
+  let html = `<p>Marque las "c" correctas:</p><div>`;
+  for(let i=0;i<letters.length;i++){
+    if(letters[i]!==" ")
+      html += `<span class='letter-box' onclick='this.classList.add("marked")'>${letters[i]}</span>`;
+  }
+  html += `</div><br><p id='timer'></p>`;
+
+  show(html);
+
+  let secs = 180;
+  document.getElementById("timer").innerText = "Tiempo restante: 180 s";
+
+  let timer = setInterval(()=>{
+    secs--;
+    document.getElementById("timer").innerText = "Tiempo restante: " + secs + " s";
+    if(secs<=0){
+      clearInterval(timer);
+      recall();
+    }
+  }, 1000);
+}
+
+/* ============================================================
+   FASE DE RECUERDO
+============================================================ */
+function recall(){
+  show(`
+    <h3>Prueba de memoria</h3>
+    <p>Escriba todas las palabras que recuerde (sin importar el orden).</p>
+    <textarea id='rec' rows='10' cols='40'></textarea><br>
+    <button onclick="saveRecall()">Finalizar</button>
+  `);
+}
+
+function saveRecall(){
+  data.recall = document.getElementById("rec").value;
+  finish();
+}
+
+/* ============================================================
+   FINAL Y DESCARGA CSV
+============================================================ */
+function finish(){
+  let csv = "group,list,edad,sexo,estudios,word,cue,response,recall\n";
+  data.trials.forEach(t=>{
+    csv += `${data.group},${data.list},${data.demographics.edad},${data.demographics.sexo},${data.demographics.estudios},${t.word},${t.cue},${t.response},"${data.recall.replace(/"/g,'')}"\n`;
+  });
+
+  let blob = new Blob([csv],{type:"text/csv"});
+  let url = URL.createObjectURL(blob);
+
+  show(`
+    <p>Muchas gracias por participar.</p>
+    <a href='${url}' download='datos_PEC.csv'>Descargar datos (CSV)</a>
+  `);
+}
+
+function endExp(){ show("<p>Fin del experimento.</p>"); }
+
+consent();
+</script>
+
+</body>
+</html>
+
