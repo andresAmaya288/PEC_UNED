@@ -1,4 +1,4 @@
-PEC Psicología de la Memoria 2025/2026 — UNED
+Prueba de Evaluación Continua Psicología UNED 2025/2026 — UNED
 
 Cambios recientes (mejoras):
 
@@ -21,6 +21,9 @@ Cambios adicionales hechos ahora:
 	La lista B usa la secuencia invertida (A ↔ S) como pediste.
 - La Tarea de atención ahora genera una secuencia larga pero se muestra en una caja compacta y desplazable para mantener la coherencia visual con el resto del experimento.
 
+- El formulario demográfico ahora ofrece opciones de sexo fijas: `Hombre`, `Mujer` y `No especificado`.
+- La fase de memoria tiene un límite de tiempo de **5 minutos**; si se agota el tiempo, la respuesta se guarda automáticamente y se ofrece la descarga de los resultados.
+
 Si quieres ajustar la secuencia (por ejemplo invertirla parcialmente, o especificar un patrón diferente) o controlar la longitud exacta del texto de relleno, dime el patrón/longitud y lo adapto.
 
 Mejoras de diseño aplicadas:
@@ -35,3 +38,8 @@ Nota sobre cegamiento:
 - La interfaz ahora muestra solamente 'I' o 'N' en la barra superior para el grupo (I = Intencional, N = No-intencional / Incidental). Esto es sólo un cambio de presentación; internamente los datos siguen registrando la condición completa para análisis.
 
 Para revisar los cambios abre `index.html` y prueba el flujo completo en escritorio y en el modo móvil del inspector del navegador.
+
+Textos actualizados:
+
+- La pantalla de instrucciones y la propia hoja de la Tarea de atención muestran ahora el texto de instrucciones ampliado (explicando el objetivo: marcar las 'c' precedidas de 'a' o seguidas de 'e' y el límite de 3 minutos).
+- La prueba de memoria (recall) ahora contiene el texto de instrucciones ampliado y un temporizador visible de 5 minutos; si se agota, la respuesta se guarda automáticamente.

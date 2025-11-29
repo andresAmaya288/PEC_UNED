@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>PEC Psicología de la Memoria 2025/2026</title>
+  <title>Prueba de Evaluación Continua Psicología UNED 2025/2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -24,6 +24,7 @@
     .app { width:100%; max-width:var(--max-width); margin: 18px; }
     header.app-header{ display:flex; align-items:flex-start; gap:18px; justify-content:space-between; margin-bottom:18px }
     .brand{ display:flex; align-items:center; gap:12px }
+    .brand .logo{ width:60px; aspect-ratio:1/1; height:auto; border-radius:10px; display:flex;align-items:center;justify-content:center;color:white;font-weight:700; flex:0 0 auto }
     .brand h1{ font-size:20px; margin:0; font-weight:700 }
     .brand p{ margin:0; color:var(--muted); font-size:13px }
 
@@ -43,6 +44,7 @@
     @media (max-width:680px){ .brand h1{ font-size:17px } .brand p{font-size:12px} }
     @media (max-width:480px){
       body{font-size:16px;padding:14px}
+      .brand .logo{ width:48px }
       .letter-box{font-size:24px;padding:12px 12px;margin:6px;min-width:40px;min-height:44px}
       button{padding:10px 12px;font-size:16px}
       header.app-header{flex-direction:column;align-items:stretch}
@@ -70,10 +72,10 @@
 <div class="app">
   <header class="app-header">
     <div class="brand">
-      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700">PEC</div>
+      <div class="logo" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));">PEC</div>
       <div>
-        <h1>PEC Psicología de la Memoria 2025/2026</h1>
-        <p>Estudio científico de memoria (UNED) — tarea breve</p>
+        <h1>Prueba de Evaluación Continua Psicología 2025/2026</h1>
+        <p>Andrés Amaya UNED - Procedimiento Experimental</p>
       </div>
     </div>
     <div class="controls">
@@ -121,6 +123,7 @@ for(let i=0;i<30;i++){
 }
 
 let trialList = listVersion==="A" ? listA : listB;
+let phase = 'study'; // 'study' | 'attention' | 'recall' | 'done'
 
 // populate small header fields and initialize progress UI
 function initUI(){
@@ -129,7 +132,7 @@ function initUI(){
   const pt = document.getElementById('progress-total');
   if(gd) gd.textContent = (group === 'Intencional') ? 'I' : 'N';
   if(ld) ld.textContent = listVersion;
-  if(pt) pt.textContent = trialList.length;
+  if(pt) pt.textContent = (trialList.length + 2);
   updateProgress();
 }
 
@@ -137,12 +140,22 @@ function updateProgress(){
   const p = document.getElementById('progress');
   const lbl = document.getElementById('progress-label');
   if(!p || !lbl) return;
-  const total = trialList.length || 1;
-  const completed = Math.min(Math.max(idx,0), total);
-  const percentComplete = Math.round((completed/total)*100);
+  const totalSteps = (trialList.length || 0) + 2; // study trials + attention + recall
+  let currentStep = 1;
+  if(phase === 'study'){
+    currentStep = Math.min(idx + 1, trialList.length);
+    currentStep = Math.max(currentStep, 1);
+  } else if(phase === 'attention'){
+    currentStep = trialList.length + 1;
+  } else if(phase === 'recall'){
+    currentStep = trialList.length + 2;
+  } else if(phase === 'done'){
+    currentStep = totalSteps;
+  }
+
+  const percentComplete = Math.round(((currentStep - 1) / totalSteps) * 100);
   p.style.width = percentComplete + '%';
-  // show trial number (1-based) while there are still trials left, otherwise show total
-  lbl.textContent = completed < total ? (completed + 1) : total;
+  lbl.textContent = currentStep;
 }
 
 let data = {
@@ -152,6 +165,9 @@ let data = {
   trials: [],
   recall: ""
 };
+
+let fillerTimer = null;
+let recallTimer = null;
 
 function show(html){
   document.getElementById("content").innerHTML = html;
@@ -179,7 +195,13 @@ function demographics(){
   show(`
     <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
       <label>Edad: <input id='edad' type='number' min='16' max='120' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
-      <label>Sexo: <input id='sexo' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
+      <label style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">Sexo:
+        <select id='sexo' style='padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);min-width:180px'>
+          <option value="Hombre">Hombre</option>
+          <option value="Mujer">Mujer</option>
+          <option value="No especificado">No especificado</option>
+        </select>
+      </label>
       <label>Años de estudios formales: <input id='est' type='number' min='0' max='50' style='padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></label>
       <div style="margin-top:6px"><button onclick="saveDemographics()">Continuar</button></div>
     </div>
@@ -276,11 +298,12 @@ function recordResp(word,cue,resp){
   INSTRUCCIONES TAREA DE ATENCIÓN (distractor)
 ============================================================ */
 function fillerInstructions(){
+  phase = 'attention';
+  updateProgress();
   show(`
     <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
       <h3 style="margin:0;margin-bottom:6px">Tarea de atención (distractor)</h3>
-      <p style="color:var(--muted);margin:0">En la siguiente tarea encontrará una serie de letras. Debe tachar únicamente aquellas letras <b>“c”</b> que estén <b>precedidas por una “a”</b> o <b>seguidas de una “e”</b>.</p>
-      <div style="margin-top:8px;color:var(--muted)">Dispone de <strong>3 minutos</strong> para realizar esta tarea.</div>
+      <p style="color:var(--muted);margin:0">En esta hoja encontrará una serie de letras (a, b, c, d, e). Su tarea consiste en tachar, de forma clara, todas aquellas letras “c” que vayan precedidas de letras “a”, o que vayan seguidas de “e” (el resto de “c” no deben ser marcadas). Dispone de <strong>3 minutos</strong> para realizar esta tarea.</p>
       <div style="margin-top:8px"><button onclick="startFiller()">Comenzar</button></div>
     </div>
   `);
@@ -309,7 +332,7 @@ function startFiller(){
   // adjust the repeat count here if you want more or fewer items
   let letters = buildLetterString(80);
 
-  let html = `<p style="font-weight:600;margin-bottom:6px">Marque las "c" correctas:</p><div id='filler-area' class='filler-area'>`;
+  let html = `<p style="font-weight:600;margin-bottom:6px">En esta hoja encontrará una serie de letras (a, b, c, d, e). Su tarea consiste en tachar, de forma clara, todas aquellas letras “c” que vayan precedidas de letras “a”, o que vayan seguidas de “e” (el resto de “c” no deben ser marcadas). Dispone de <strong>3 minutos</strong> para realizar esta tarea.</p><div id='filler-area' class='filler-area'>`;
   for(let i=0;i<letters.length;i++){
     if(letters[i] !== " ") html += `<span class='letter-box' data-index='${i}' tabindex='0' role='button' aria-pressed='false'>${letters[i]}</span>`;
   }
@@ -344,14 +367,18 @@ function startFiller(){
     fillerArea.addEventListener('contextmenu', (e)=>e.preventDefault());
   }
 
+  // start 3 minute timer for the attention task
   let secs = 180;
   document.getElementById("timer").innerText = "Tiempo restante: 180 s";
-
-  let timer = setInterval(()=>{
+  if(fillerTimer) clearInterval(fillerTimer);
+  fillerTimer = setInterval(()=>{
     secs--;
-    document.getElementById("timer").innerText = "Tiempo restante: " + secs + " s";
+    const el = document.getElementById("timer");
+    if(el) el.innerText = "Tiempo restante: " + secs + " s";
     if(secs<=0){
-      clearInterval(timer);
+      clearInterval(fillerTimer);
+      fillerTimer = null;
+      // proceed to recall phase
       recall();
     }
   }, 1000);
@@ -361,17 +388,47 @@ function startFiller(){
    FASE DE RECUERDO
 ============================================================ */
 function recall(){
+  // move to recall phase
+  phase = 'recall';
+  updateProgress();
+  // clear filler timer if still running
+  if(fillerTimer){ clearInterval(fillerTimer); fillerTimer = null; }
+
   show(`
     <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
       <h3 style="margin:0">Prueba de memoria</h3>
-      <p style="color:var(--muted);margin:0">Escriba todas las palabras que recuerde (sin importar el orden).</p>
-      <textarea id='rec' rows='10' cols='40' style='width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)'></textarea>
-      <div><button onclick="saveRecall()">Finalizar</button></div>
+      <p style="color:var(--muted);margin:0">A continuación, se evaluará el recuerdo de las palabras que fueron presentadas anteriormente. Por favor, escriba en la hoja todas las palabras que logre recordar en el orden que prefiera (no es necesario que sea el mismo en que aparecieron) de las que se presentaron al comienzo del experimento, con independencia de si tenía que decidir su número de sílabas (letra S) o juzgarla como positiva o negativa (letra A). No se preocupe si no puede recordar todas las palabras. Dispone de <strong>5 minutos</strong> para hacer esta tarea. Muchas gracias por su colaboración</p>
+      <textarea id='rec' rows='10' cols='40' style='width:100%;padding:8px;border-radius:6px;border:1px solid rgba(0,0,0,0.06)'></textarea>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px"><p id='rec-timer' style='margin:0;font-weight:700;color:var(--muted)'></p><div style="color:var(--muted);font-size:13px">La tarea de memoria tiene límite de <strong>5 minutos</strong>. Si se agota el tiempo, su respuesta será guardada automáticamente para descarga.</div></div>
+      <div style="margin-top:8px"><button onclick="saveRecall()">Finalizar</button></div>
     </div>
   `);
+
+  // start 5 minute timer for recall
+  let secs = 300; // 5 minutes
+  const el = document.getElementById('rec-timer');
+  if(el) el.innerText = 'Tiempo restante: 5:00';
+  if(recallTimer) clearInterval(recallTimer);
+  recallTimer = setInterval(()=>{
+    secs--;
+    const e = document.getElementById('rec-timer');
+    if(e){
+      const mins = Math.floor(secs/60);
+      const s = secs % 60;
+      e.innerText = `Tiempo restante: ${mins}:${s.toString().padStart(2,'0')}`;
+    }
+    if(secs<=0){
+      clearInterval(recallTimer);
+      recallTimer = null;
+      // auto-save and proceed
+      saveRecall();
+    }
+  },1000);
 }
 
 function saveRecall(){
+  // clear recall timer if active
+  if(recallTimer){ clearInterval(recallTimer); recallTimer = null; }
   data.recall = document.getElementById("rec").value;
   finish();
 }
@@ -380,6 +437,8 @@ function saveRecall(){
    FINAL Y DESCARGA CSV
 ============================================================ */
 function finish(){
+  phase = 'done';
+  updateProgress();
   let csv = "group,list,edad,sexo,estudios,word,cue,response,recall\n";
   data.trials.forEach(t=>{
     csv += `${data.group},${data.list},${data.demographics.edad},${data.demographics.sexo},${data.demographics.estudios},${t.word},${t.cue},${t.response},"${data.recall.replace(/"/g,'')}"\n`;
