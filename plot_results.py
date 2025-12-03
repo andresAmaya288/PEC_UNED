@@ -45,10 +45,10 @@ def load_data(table1_path='results/table1.csv'):
     
     # Melt to long format for easier plotting
     long = pd.DataFrame({
-        'Participant': np.repeat(df['Participant'].values, 2),
-        'Group': np.repeat(df['Group'].values, 2),
+        'Participant': np.repeat(df['Participant'].to_numpy(), 2),
+        'Group': np.repeat(df['Group'].to_numpy(), 2),
         'Processing': ['S', 'A'] * len(df),
-        'Score': np.concatenate([df['Perc_S'].values, df['Perc_A'].values])
+        'Score': np.concatenate([df['Perc_S'].to_numpy(), df['Perc_A'].to_numpy()])
     })
     
     return df, long

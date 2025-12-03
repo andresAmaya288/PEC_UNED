@@ -21,20 +21,30 @@ from pathlib import Path
 import re
 import unicodedata
 import sys
-import math
+import warnings
 
 import numpy as np
 import pandas as pd
 
 from scipy import stats
-import pingouin as pg
-HAS_PINGOUIN = True
 
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
+try:
+    import pingouin as pg
+    HAS_PINGOUIN = True
+except Exception:
+    pg = None  # type: ignore
+    HAS_PINGOUIN = False
 
-sm = None
-smf = None
+try:
+    import statsmodels.api as sm
+    import statsmodels.formula.api as smf
+except Exception:
+    sm = None
+    smf = None
+
+# suppress a known scipy runtime warning about catastrophic cancellation when
+# datasets are nearly identical (this happened with very small n in some runs)
+warnings.filterwarnings("ignore", category=RuntimeWarning, message=r"Precision loss occurred in moment calculation due to catastrophic cancellation.*")
 
 
 def normalize_text(s):
@@ -155,10 +165,10 @@ def analyze_folder(datos_path='datos', results_path='results'):
 
     # build long format for ANOVA: one row per participant x processing
     long = pd.DataFrame({
-        'Participant': np.repeat(dfp['Participant'].values, 2),
-        'Group': np.repeat(dfp['Group'].values, 2),
+        'Participant': np.repeat(dfp['Participant'].to_numpy(), 2),
+        'Group': np.repeat(dfp['Group'].to_numpy(), 2),
         'Processing': ['S', 'A'] * len(dfp),
-        'Score': np.concatenate([dfp['Perc_S'].values, dfp['Perc_A'].values])
+        'Score': np.concatenate([dfp['Perc_S'].to_numpy(), dfp['Perc_A'].to_numpy()])
     })
 
     # remove rows with nan scores (if some participants missing a condition)
@@ -200,7 +210,7 @@ def analyze_folder(datos_path='datos', results_path='results'):
     out_lines.append('')
 
     # attempt mixed ANOVA with pingouin
-    if HAS_PINGOUIN:
+    if HAS_PINGOUIN and pg is not None:
         out_lines.append('Mixed ANOVA using pingouin (Group between, Processing within)')
         try:
             aov = pg.mixed_anova(data=long, dv='Score', within='Processing', between='Group', subject='Participant')
@@ -209,7 +219,7 @@ def analyze_folder(datos_path='datos', results_path='results'):
             out_lines.append('pingouin mixed_anova failed: ' + str(e))
     else:
         out_lines.append('pingouin not available; attempting statsmodels fallback (mixed effects)')
-        if smf is None:
+        if sm is None or smf is None:
             out_lines.append('statsmodels no disponible; no se puede realizar ANOVA. Instale pingouin o statsmodels.')
         else:
             # Fit mixed effects model with random intercept for Participant
