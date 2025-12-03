@@ -1,0 +1,7 @@
+Participant,Group,List,Edad,Sexo,S_matched,S_total,A_matched,A_total,Perc_S,Perc_A
+datos_parcipiante_N (1),Incidental,B,22,Hombre,2,15,5,15,13.333333333333334,33.33333333333333
+datos_parcipiante_N (2),Incidental,A,23,Hombre,1,15,4,15,6.666666666666667,26.666666666666668
+datos_parcipiante_N (3),Incidental,B,51,Mujer,6,15,9,15,40.0,60.0
+datos_parcipiante_N (4),Intencional,B,52,Hombre,1,15,9,15,6.666666666666667,60.0
+datos_parcipiante_N (5),Intencional,A,21,Mujer,4,15,9,15,26.666666666666668,60.0
+datos_parcipiante_N (6),Intencional,A,22,Hombre,2,15,9,15,13.333333333333334,60.0
