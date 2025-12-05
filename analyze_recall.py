@@ -172,6 +172,28 @@ def analyze_folder(datos_path='datos/normalized', results_path='results'):
             group_data = dfp[dfp['Group'] == group]
             for _, row in group_data.iterrows():
                 fh.write(','.join(str(v) for v in row.values) + '\n')
+            # Add summary row: mean Perc_S and Perc_A for this group
+            try:
+                mean_s = float(group_data['Perc_S'].astype(float).mean())
+            except Exception:
+                mean_s = ''
+            try:
+                mean_a = float(group_data['Perc_A'].astype(float).mean())
+            except Exception:
+                mean_a = ''
+            summary_values = [f'Group_Mean_{group}', group, '', '', '', '', '', '', '', f'{mean_s}', f'{mean_a}']
+            fh.write(','.join(str(v) for v in summary_values) + '\n')
+            # After group rows, write a summary row with the mean percentages for S and A
+            try:
+                mean_s = float(group_data['Perc_S'].astype(float).mean())
+            except Exception:
+                mean_s = ''
+            try:
+                mean_a = float(group_data['Perc_A'].astype(float).mean())
+            except Exception:
+                mean_a = ''
+            summary_values = [f'Group_Mean_{group}', group, '', '', '', '', '', '', '', f'{mean_s}', f'{mean_a}']
+            fh.write(','.join(str(v) for v in summary_values) + '\n')
     
     print(f"Tabla 1 guardada en: {table1_path}")
     print(f"  - Total participantes procesados: {len(dfp)}")
@@ -180,11 +202,17 @@ def analyze_folder(datos_path='datos/normalized', results_path='results'):
         print(f"    {group}: {count} participantes")
 
     # build long format for ANOVA: one row per participant x processing
+    # Ensure scores are interleaved per participant: [Perc_S_p1, Perc_A_p1, Perc_S_p2, Perc_A_p2, ...]
+    participants_rep = np.repeat(dfp['Participant'].to_numpy(), 2)
+    groups_rep = np.repeat(dfp['Group'].to_numpy(), 2)
+    processing_seq = ['S', 'A'] * len(dfp)
+    # interleave Perc_S and Perc_A so each participant has S then A
+    scores_interleaved = np.column_stack((dfp['Perc_S'].to_numpy(), dfp['Perc_A'].to_numpy())).ravel()
     long = pd.DataFrame({
-        'Participant': np.repeat(dfp['Participant'].to_numpy(), 2),
-        'Group': np.repeat(dfp['Group'].to_numpy(), 2),
-        'Processing': ['S', 'A'] * len(dfp),
-        'Score': np.concatenate([dfp['Perc_S'].to_numpy(), dfp['Perc_A'].to_numpy()])
+        'Participant': participants_rep,
+        'Group': groups_rep,
+        'Processing': processing_seq,
+        'Score': scores_interleaved
     })
 
     # remove rows with nan scores (if some participants missing a condition)

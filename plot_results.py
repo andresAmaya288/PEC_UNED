@@ -45,17 +45,24 @@ def load_data(table1_path='results/table1.csv'):
     
     # Remove empty rows
     df = df.dropna(how='all')
+    # Remove any summary rows that were appended to table1 (Participant names like Group_Mean_...)
+    if 'Participant' in df.columns:
+        df = df[~df['Participant'].astype(str).str.startswith('Group_Mean')]
+    # Ensure numeric columns are numeric
+    df['Perc_S'] = pd.to_numeric(df['Perc_S'], errors='coerce')
+    df['Perc_A'] = pd.to_numeric(df['Perc_A'], errors='coerce')
     
     if df.empty:
         print("Error: table1.csv no contiene datos válidos.")
         return None
     
     # Melt to long format for easier plotting
+    # Build long format: each participant contributes one S and one A score
     long = pd.DataFrame({
         'Participant': np.repeat(df['Participant'].to_numpy(), 2),
         'Group': np.repeat(df['Group'].to_numpy(), 2),
         'Processing': ['S', 'A'] * len(df),
-        'Score': np.concatenate([df['Perc_S'].to_numpy(), df['Perc_A'].to_numpy()])
+        'Score': np.column_stack((df['Perc_S'].to_numpy(), df['Perc_A'].to_numpy())).ravel()
     })
     
     return df, long
@@ -262,8 +269,16 @@ def plot_paired_comparison(df, results_path='results'):
     ax.set_title('Comparación Pareada: Procesamiento Superficial vs Profundo\n(Por Participante)',
                  fontsize=14, fontweight='bold')
     ax.set_xticks(x)
-    ax.set_xticklabels(df['Participant'].str.replace('datos_parcipiante_N ', 'P').str.replace('.csv', ''),
-                       rotation=45, ha='right')
+    # Normalize participant labels to P1, P2, ... using digits found in the original name
+    import re
+    labels = []
+    for i, name in enumerate(df['Participant'], start=1):
+        m = re.search(r"(\d+)", str(name))
+        if m:
+            labels.append(f"P{m.group(1)}")
+        else:
+            labels.append(f"P{i}")
+    ax.set_xticklabels(labels, rotation=45, ha='right')
     ax.set_ylim(0, 100)
     ax.legend(fontsize=11, loc='upper left')
     ax.grid(axis='y', alpha=0.3)
