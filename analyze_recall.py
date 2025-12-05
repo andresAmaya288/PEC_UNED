@@ -183,17 +183,6 @@ def analyze_folder(datos_path='datos/normalized', results_path='results'):
                 mean_a = ''
             summary_values = [f'Group_Mean_{group}', group, '', '', '', '', '', '', '', f'{mean_s}', f'{mean_a}']
             fh.write(','.join(str(v) for v in summary_values) + '\n')
-            # After group rows, write a summary row with the mean percentages for S and A
-            try:
-                mean_s = float(group_data['Perc_S'].astype(float).mean())
-            except Exception:
-                mean_s = ''
-            try:
-                mean_a = float(group_data['Perc_A'].astype(float).mean())
-            except Exception:
-                mean_a = ''
-            summary_values = [f'Group_Mean_{group}', group, '', '', '', '', '', '', '', f'{mean_s}', f'{mean_a}']
-            fh.write(','.join(str(v) for v in summary_values) + '\n')
     
     print(f"Tabla 1 guardada en: {table1_path}")
     print(f"  - Total participantes procesados: {len(dfp)}")
