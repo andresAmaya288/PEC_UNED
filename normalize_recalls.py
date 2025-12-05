@@ -18,8 +18,8 @@ import sys
 import unicodedata
 import difflib
 
-BASE = os.path.join(os.path.dirname(__file__), '..')
-DATOS_DIR = os.path.normpath(os.path.join(BASE, 'datos'))
+BASE = os.path.dirname(__file__)
+DATOS_DIR = os.path.join(BASE, 'datos')
 SEPARATOR = ';'
 OUT_DIR = os.path.join(DATOS_DIR, 'normalized')
 

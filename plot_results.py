@@ -36,11 +36,18 @@ plt.rcParams['legend.fontsize'] = 10
 
 
 def load_data(table1_path='results/table1.csv'):
-    """Load and prepare data from table1.csv"""
+    """Load and prepare data from table1.csv (skips comment lines starting with #)"""
     try:
-        df = pd.read_csv(table1_path)
+        df = pd.read_csv(table1_path, comment='#')
     except FileNotFoundError:
         print(f"Error: {table1_path} no encontrado. Ejecuta analyze_recall.py primero.")
+        return None
+    
+    # Remove empty rows
+    df = df.dropna(how='all')
+    
+    if df.empty:
+        print("Error: table1.csv no contiene datos válidos.")
         return None
     
     # Melt to long format for easier plotting
@@ -293,7 +300,7 @@ def generate_all_plots(table1_path='results/table1.csv', results_path='results')
     plot_boxplots(long, results_path)
     plot_paired_comparison(df, results_path)
     
-    print("\n✓ Todos los gráficos han sido generados exitosamente.")
+    print("\n[OK] Todos los gráficos han sido generados exitosamente.")
     return 0
 
 

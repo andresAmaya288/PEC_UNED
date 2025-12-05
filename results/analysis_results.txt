@@ -1,20 +1,20 @@
 ANALYSIS SUMMARY
 ================
-N participants: 6
+N participants: 8
 
 Descriptive stats (means and 95% CI)
-Incidental - S: mean=26.67, 95% CI=[-6.46, 59.79], n=3
-Incidental - A: mean=8.89, 95% CI=[-0.67, 18.45], n=3
-Intencional - S: mean=51.11, 95% CI=[12.87, 89.36], n=3
-Intencional - A: mean=48.89, 95% CI=[1.08, 96.70], n=3
+Incidental - S: mean=16.67, 95% CI=[2.97, 30.36], n=4
+Incidental - A: mean=18.33, 95% CI=[-5.19, 41.86], n=4
+Intencional - S: mean=48.33, 95% CI=[21.81, 74.85], n=4
+Intencional - A: mean=53.33, 95% CI=[32.12, 74.55], n=4
 
 Mixed ANOVA using pingouin (Group between, Processing within)
-        Source           SS  DF1  DF2           MS         F     p-unc       np2  eps
-0        Group  3114.814815    1    4  3114.814815  8.946809  0.040293  0.691044  NaN
-1   Processing   300.000000    1    4   300.000000  5.785714  0.073926  0.591241  1.0
-2  Interaction   181.481481    1    4   181.481481  3.500000  0.134702  0.466667  NaN
+        Source           SS  DF1  DF2           MS          F     p-unc       np2  eps
+0        Group  4444.444444    1    6  4444.444444  28.915663  0.001700  0.828157  NaN
+1   Processing    44.444444    1    6    44.444444   0.201681  0.669133  0.032520  1.0
+2  Interaction    11.111111    1    6    11.111111   0.050420  0.829785  0.008333  NaN
 
 Paired comparisons (S vs A) and 95% CI of the mean difference
-Overall S - A: mean_diff=-32.222, 95% CI=[-47.814, -16.630], p_paired=0.0032
-Incidental S - A: mean_diff=-20.000, 95% CI=[-20.000, -20.000], p_paired=0.0000, n=3
-Intencional S - A: mean_diff=-44.444, 95% CI=[-69.742, -19.147], p_paired=0.0171, n=3
+Overall S - A: mean_diff=-33.333, 95% CI=[-44.480, -22.186], p_paired=0.0002
+Incidental S - A: mean_diff=-21.667, 95% CI=[-26.971, -16.363], p_paired=0.0010, n=4
+Intencional S - A: mean_diff=-45.000, 95% CI=[-55.157, -34.843], p_paired=0.0008, n=4

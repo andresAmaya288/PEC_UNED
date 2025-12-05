@@ -68,7 +68,7 @@ def tokenize(s):
     return s2.split(' ')
 
 
-def analyze_folder(datos_path='datos', results_path='results'):
+def analyze_folder(datos_path='datos/normalized', results_path='results'):
     datos = Path(datos_path)
     results = Path(results_path)
     results.mkdir(parents=True, exist_ok=True)
@@ -158,10 +158,26 @@ def analyze_folder(datos_path='datos', results_path='results'):
         print("No se pudieron procesar participantes.")
         return 1
 
-    # Save Table 1 (wide)
+    # Sort by Group so Intencional and Incidental are grouped together
+    dfp = dfp.sort_values('Group').reset_index(drop=True)
+    
+    # Save Table 1 with group separation (comments for readability)
     table1_path = results / 'table1.csv'
-    dfp.to_csv(table1_path, index=False)
+    with open(table1_path, 'w', encoding='utf-8', newline='') as fh:
+        # Write header
+        fh.write(','.join(dfp.columns) + '\n')
+        # Write rows grouped by condition with section markers
+        for group in sorted(dfp['Group'].unique()):
+            fh.write(f'\n# --- Grupo: {group} ---\n')
+            group_data = dfp[dfp['Group'] == group]
+            for _, row in group_data.iterrows():
+                fh.write(','.join(str(v) for v in row.values) + '\n')
+    
     print(f"Tabla 1 guardada en: {table1_path}")
+    print(f"  - Total participantes procesados: {len(dfp)}")
+    for group in sorted(dfp['Group'].unique()):
+        count = len(dfp[dfp['Group'] == group])
+        print(f"    {group}: {count} participantes")
 
     # build long format for ANOVA: one row per participant x processing
     long = pd.DataFrame({
